@@ -21,7 +21,8 @@ class BuildingRepository
     function getBuildingsInRadius(float $lat, float $long, float $radius) {
         $earthRadius = 6371;
 
-        return Building::selectRaw(
+        return Building::with('organizations')
+            ->selectRaw(
                 "*, (
                     $earthRadius * acos(
                         cos(radians(?)) * cos(radians(latitude)) *
@@ -36,7 +37,7 @@ class BuildingRepository
 
     
     function getBuildingsInRectangle(float $min_lat, float $min_long, float $max_lat, float $max_long) {
-        return Building::where("latitude", ">=", $min_lat)
+        return Building::with('organizations')->where("latitude", ">=", $min_lat)
                             ->where("latitude", "<=", $max_lat)
                             ->where("longitude", ">=", $min_long)
                             ->where("longitude", "<=", $max_long)
