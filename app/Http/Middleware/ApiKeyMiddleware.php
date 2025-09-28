@@ -15,13 +15,22 @@ class ApiKeyMiddleware
      */
     public function handle(Request $request, Closure $next): Response
     {
-        $apiKey = $request->header('API-KEY');
+        $authorizationHeader = $request->header('Authorization');
         $validKey = config('app.api_key');
 
-        if (!$apiKey || $apiKey !== $validKey) {
+        if (!$authorizationHeader || !str_starts_with($authorizationHeader, 'Bearer ')) {
             return response()->json([
                 'error' => 'Unauthorized',
-                'message' => 'Invalid or missing API key.'
+                'message' => 'Missing or invalid Authorization header.'
+            ], 401);
+        }
+
+        $apiKey = substr($authorizationHeader, 7);
+
+        if ($apiKey !== $validKey) {
+            return response()->json([
+                'error' => 'Unauthorized',
+                'message' => 'Invalid API token.'
             ], 401);
         }
 
