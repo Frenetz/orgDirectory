@@ -24,6 +24,12 @@ class OrganizationController extends Controller
 
     function show(int $organization_id, Request $request) {
         $organization = $this->organizationService->getOrganizationById($organization_id);
+        if (!$organization) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Organization not found',
+            ], 404);
+        }        
         return new OrganizationCollection([$organization]);
     }
 

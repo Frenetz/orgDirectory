@@ -19,6 +19,12 @@ class ActivityController extends Controller
 
     function organizations(int $activity_id, Request $request) {
         $organizations = $this->activityService->getAllOrganizations($activity_id);
+        if ($organizations === null) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Activity not found',
+            ], 404);
+        }        
         return new OrganizationCollection($organizations);
     }
 }

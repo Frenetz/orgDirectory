@@ -14,6 +14,9 @@ class ActivityService
 
     function getAllOrganizations(int $activity_id) {
         $activityWithChildren = $this->activityRepository->getActivityWithChildren($activity_id);
+        if (!$activityWithChildren) {
+            return null;
+        }
         $activities = $this->flattenActivities([$activityWithChildren]);
         return collect($activities)->flatMap(fn($activity) => $activity->organizations);
     }
